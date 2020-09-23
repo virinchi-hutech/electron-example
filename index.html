@@ -32,16 +32,18 @@
 <body>
     <h1>Electron Auto Update Example</h1>
     <p id="version"></p>
+    <div id="notification" class="hidden">
+        <p id="message"></p>
+        <button id="close-button" onClick="closeNotification()">
+            Close
+        </button>
+        <button id="restart-button" onClick="restartApp()" class="hidden">
+            Restart
+        </button>
+    </div>
     <script>
         const { ipcRenderer } = require('electron');
         const version = document.getElementById('version');
-
-        ipcRenderer.send('app_version');
-        ipcRenderer.on('app_version', (event, arg) => {
-            ipcRenderer.removeAllListeners('app_version');
-            version.innerText = 'Version ' + arg.version;
-        });
-
         const notification = document.getElementById('notification');
         const message = document.getElementById('message');
         const restartButton = document.getElementById('restart-button');
@@ -56,6 +58,11 @@
             restartButton.classList.remove('hidden');
             notification.classList.remove('hidden');
         });
+        ipcRenderer.send('app_version');
+        ipcRenderer.on('app_version', (event, arg) => {
+            ipcRenderer.removeAllListeners('app_version');
+            version.innerText = 'Version ' + arg.version;
+        });
         function closeNotification() {
             notification.classList.add('hidden');
         }
@@ -63,13 +70,4 @@
             ipcRenderer.send('restart_app');
         }
     </script>
-    <div id="notification" class="hidden">
-        <p id="message"></p>
-        <button id="close-button" onClick="closeNotification()">
-            Close
-        </button>
-        <button id="restart-button" onClick="restartApp()" class="hidden">
-            Restart
-        </button>
-    </div>
 </body>
